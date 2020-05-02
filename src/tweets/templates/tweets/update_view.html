@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %} {{ block.super }} | Update {% endblock title %}
+
+{% block body %}
+    <br/><br/>
+    {% include "tweets/form.html" with form=form btn_oraora='Update Tweet' %}
+{% endblock body %}
+

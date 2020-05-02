@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} {{ block.super }} | Detail {% endblock title %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-3 col-xs-12" style="background-color: bisque;">
+        <h1><p>{{ object.user }}</p></h1>
+    </div>
+
+    <div class="col-sm-9 col-xs-12">
+        Is Retweet: {{ is_retweet }} <br/>
+        {{ object.content }} <br/>
+        Via {{ object.user }} | {{ object.timestamp|timesince }}
+    </div>
+
+</div>
+
+
+
+{% endblock body %}
+

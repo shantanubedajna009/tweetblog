@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %} {{ block.super }} | List {% endblock title %}
+
+{% block script %}
+{% load static %}
+
+<script src="{% static 'tweets/js/tweets_list.js' %}"></script>
+
+{% endblock script %}
+
+{% block body %}
+    
+    <div class="row">
+
+        <div class="col-sm-3 col-xs-12" style="background-color: bisque;">
+            <h1><p>{{ request.user }}</p></h1>
+        </div>
+
+        <div class="col-sm-9 col-xs-12">
+
+            {% if not request.GET.q %}
+              <div class="">
+
+                {% include "tweets/form.html" with form=create_form action_url=create_url form_id="tweetForm" btn_oraora="Tweet" %}
+
+              </div>
+            {% endif %}
+
+            <div id="tweetlist"></div>
+
+            <a class="btn btn-success load-more" href="#">Load More Tweets</a>
+        </div>
+    </div>
+
+{% endblock body %}
