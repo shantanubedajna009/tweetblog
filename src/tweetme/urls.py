@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^tweet/', include('tweets.urls', namespace="tweets")),
     url(r'^', include('accounts.urls', namespace="accounts")),
     url(r'^api/tweet/', include('tweets.api.urls', namespace="tweet-api")),
+    url(r'^api/', include('accounts.api.urls', namespace="accounts-api")),
     url(r'^tags/', include('hashtags.urls', namespace='tags')),
 
 ]

@@ -22,7 +22,7 @@
             {% if not request.GET.q %}
               <div class="">
 
-                {% include "tweets/form.html" with form=create_form action_url=create_url form_id="tweetForm" btn_oraora="Tweet" %}
+                {% include "tweets/form.html" with form=create_form action_url=create_url form_class="tweet-form" btn_oraora="Tweet" %}
 
               </div>
             {% endif %}

@@ -1,6 +1,13 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %} {{ block.super }} | Detail {% endblock title %}
+
+{% block script %}
+
+    <script src="{% static 'tweets/js/tweets_list.js' %}"></script>
+
+{% endblock script %}
 
 {% block body %}
 
@@ -13,16 +20,7 @@
                 {% if following %} Unfollow {% else %} Follow {% endif %}
             </a>
         </p>
-    </div>
 
-    <div class="col-sm-9 col-xs-12">
-        <h1>Tweets</h1>
-
-        {% for tweet in object.tweet_set.all %}
-
-            {{ tweet }} <br>
-            
-        {% endfor %}
 
         <hr>
         <h1>Following: <small>{{ object.profile.following.all.count }}</small></h1>
@@ -43,6 +41,28 @@
         {% empty %}
             <h4>Not Followed By Any Users</h4>
         {% endfor %}
+
+    </div>
+
+    <div class="col-sm-9 col-xs-12">
+        <h1>Tweets</h1>
+
+
+        <div id="tweetlist" data-url="/api/{{ object.username }}/tweet/"></div>
+        <a class="btn btn-success load-more" href="#">Load More Tweets</a>
+
+
+
+        {% comment "Commenting tweets via templates" %} <!--  commenting this block -->
+            {% for tweet in object.tweet_set.all %}
+
+                {{ tweet }} <br>
+                
+            {% endfor %}
+        {% endcomment %}
+
+        <hr>
+
         
     </div>
 

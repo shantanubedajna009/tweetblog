@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.utils import ErrorList
@@ -25,11 +25,13 @@ class RetweetView(View):
         # directly from this point in the 
         # view and django redirects to a stock 404 page
         # if the exception is seen by django
-
+        
         if request.user.is_authenticated:
             new_tweet = Tweet.objects.retweet(user=request.user, parent_obj=parent_tweet)
-
-            return HttpResponseRedirect(new_tweet.get_absolute_url())
+            if new_tweet:
+                return HttpResponseRedirect(new_tweet.get_absolute_url())
+            else:
+                return redirect("tweets:list")
         
         # user was not authenticated so no retweet
         # redirect to parent tweet detail page 
