@@ -5,9 +5,10 @@ from django.utils.timesince import timesince
 from django.urls import reverse, reverse_lazy
 
 class ParentTweetModelSerializer(serializers.ModelSerializer):
+
+    parent_id = serializers.CharField(write_only=True, required=False)
+
     user = UserDisplaySerializer(read_only=True)
-
-
     date_display = serializers.SerializerMethodField()
     timesince = serializers.SerializerMethodField()
     tweet_url = serializers.SerializerMethodField('get_absolute_url')
@@ -19,6 +20,7 @@ class ParentTweetModelSerializer(serializers.ModelSerializer):
         model = Tweet
 
         fields = [
+            'parent_id',
             'id',
             'user',
             'content',
@@ -29,7 +31,10 @@ class ParentTweetModelSerializer(serializers.ModelSerializer):
             'retweet_url',
             'likes_count',
             'is_liked_by_user',
+            'isReply',
         ]
+
+        #read_only_fields = ['isReply']
     
     def get_is_liked_by_user(self, obj):
 
@@ -77,6 +82,9 @@ class ParentTweetModelSerializer(serializers.ModelSerializer):
 
 
 class TweetModelSerializer(serializers.ModelSerializer):
+
+    parent_id = serializers.CharField(write_only=True, required=False)
+
     user = UserDisplaySerializer(read_only=True)
     # this is same as the ParentTweetSerializer
     # only difference is that the UserDisplaySerializer
@@ -106,6 +114,7 @@ class TweetModelSerializer(serializers.ModelSerializer):
         model = Tweet
 
         fields = [
+            'parent_id',
             'id',
             'user',
             'content',
@@ -120,6 +129,8 @@ class TweetModelSerializer(serializers.ModelSerializer):
             'is_liked_by_user',
             'isReply',
         ]
+
+        #read_only_fields = ['isReply']
     
     def get_is_liked_by_user(self, obj):
 

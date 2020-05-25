@@ -108,7 +108,7 @@ function loadContainer(tweetContainerID) {
         try{
                 if (innerdiv){
                         var newtext = innerdiv.html().replace(hashTagRegex, "$1<a href='/$2/'>@$2</a>");
-                        innerdiv.html(newtext)
+                        innerdiv.html(newtext);
                 }
         }
         catch{
@@ -156,7 +156,7 @@ function loadContainer(tweetContainerID) {
             },
             error: function (error) {
                 //console.log(error.status, error.statusText);
-                alert("You can't retweet same tweet in the same day again !");
+                alert("You can't retweet same tweet again !");
             }
         });
     });
@@ -205,23 +205,32 @@ function loadContainer(tweetContainerID) {
         data_user = $(this).attr("data-user");
 
         $("#replyModal").modal({
-
+            
         });
 
-        // $.ajax({
-        //     type: "GET",
-        //     url: url,
-        //     success: function (response) {
-        //         //console.log(response);
-        //         attachTweets(response, true);
-        //         updateHashLinks();
-        //         updateATTLinks();
-        //     },
-        //     error: function (error) {
-        //         //console.log(error.status, error.statusText);
-        //         alert("You can't retweet same tweet in the same day again !");
-        //     }
-        // });
+        $("#replyModal textarea").after("<input type='hidden' value='" + data_id + "' name='parent' />");
+        $("#replyModal textarea").after("<input type='hidden' value=" + true + " name='isReply' />");
+
+        $("#replyModal textarea").val("@" + data_user + " ");
+
+        $("#replyModal").on("shown.bs.modal", function () {
+            $("#tweetReplyArea").focus();
+        })
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (response) {
+                //console.log(response);
+                attachTweets(response, true);
+                updateHashLinks();
+                updateATTLinks();
+            },
+            error: function (error) {
+                //console.log(error.status, error.statusText);
+                alert("You can't retweet same tweet in the same day again !");
+            }
+        });
     });
 
 
@@ -289,7 +298,7 @@ function loadContainer(tweetContainerID) {
 
         isReply = value.isReply;
 
-        console.log(isReply);
+        //console.log(isReply);
 
         if (value.is_liked_by_user){
             verb = "Dislike";
@@ -297,7 +306,7 @@ function loadContainer(tweetContainerID) {
             verb = "Like";  
         }
 
-        console.log(value.is_liked_by_user);
+        //console.log(value.is_liked_by_user);
 
         if (value.parent && !isReply){
 
@@ -395,6 +404,8 @@ function loadContainer(tweetContainerID) {
 
     $(".tweet-form").submit(function(event){
 
+        console.log("TWEETFORM!!!!!!!!");
+
         // prevents a form's default sunmit function
         event.preventDefault();
 
@@ -413,6 +424,7 @@ function loadContainer(tweetContainerID) {
                     attachTweets(data, true);
                     updateHashLinks();
                     updateATTLinks();
+                    $("#replyModal").modal("hide");
                 },
 
                 error: function(data) {
@@ -432,13 +444,13 @@ function loadContainer(tweetContainerID) {
 
     ////////////////////////// Character limit part ////////////////////////////////////////////
 
-    $(".tweet-form").append("<span id='tweetCharsleft'>"+ charStart +"</span>");
+    $(".tweet-form").append("<span class='tweetCharsleft'>"+ charStart +"</span>");
 
     $(".tweet-form textarea").keyup(function (event) {
         //console.log(event.key, event.keyCode, event.timeStamp);
         var tweetVal = $(this).val();
         charsCurrent = charStart - tweetVal.length;
-        var spanText = $("#tweetCharsleft");
+        var spanText = $(this).parent().parent().parent().find(".tweetCharsleft");
         spanText.text(charsCurrent);
         
         if (charsCurrent === 0){
