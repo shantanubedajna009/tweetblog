@@ -20,7 +20,7 @@ class ParentTweetModelSerializer(serializers.ModelSerializer):
         model = Tweet
 
         fields = [
-            'parent_id',
+            'parent_id',   #parent_id aagei chilo magically ashe nie, db-browser diye check korechi, parent field = parent_id
             'id',
             'user',
             'content',
@@ -114,7 +114,7 @@ class TweetModelSerializer(serializers.ModelSerializer):
         model = Tweet
 
         fields = [
-            'parent_id',
+            'parent_id',  #parent_id aagei chilo magically ashe nie, db-browser diye check korechi, parent field = parent_id
             'id',
             'user',
             'content',

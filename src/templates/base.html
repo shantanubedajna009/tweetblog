@@ -45,34 +45,45 @@
     {% block script %} {% endblock script %}
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 
+    <script src="{% static 'tweets/js/tweets_list.js' %}"></script>
+
     <script>
 
-      var typingTimer;
-      var doneInterval = 800;
-      var searchInput = $(".navbar-form input[type=text]");
-      var searchQuery;
+        function autoTypeSearch () {
+            var typingTimer;
+            var doneInterval = 800;
+            var searchInput = $(".navbar-form input[type=text]");
+            var searchQuery;
+      
+            searchInput.keyup(function (event) {
+              searchQuery = $(this).val();
+              clearTimeout(typingTimer);
+              typingTimer = setTimeout(doneSearchString, doneInterval)
+      
+            });
+      
+            searchInput.keydown(function (event) {
+              console.log(event.key);
+              clearTimeout(typingTimer);
+      
+            });
+      
+            
 
-      searchInput.keyup(function (event) {
-        searchQuery = $(this).val();
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(doneSearchString, doneInterval)
 
-      });
-
-      searchInput.keydown(function (event) {
-        console.log(event.key);
-        clearTimeout(typingTimer);
-
-      });
-
-
-      function doneSearchString() {
-        if (searchQuery){
-          url = "/tweet/search/?q="+searchQuery;
-          document.location.href = url;
+            // change this to fit the user own tweet filter search
+            function doneSearchString() {
+              if (searchQuery){
+                url = "/tweet/search/?q="+searchQuery;
+                document.location.href = url;
+              }
+            }
         }
-      }
 
+        $(document).ready(function(){
+          autoTypeSearch();
+
+        });
     
 
     </script>

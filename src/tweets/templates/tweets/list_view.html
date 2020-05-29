@@ -5,7 +5,20 @@
 {% block script %}
 {% load static %}
 
-<script src="{% static 'tweets/js/tweets_list.js' %}"></script>
+<script>
+
+  ///////////////  Document Body Part //////////////////////////
+  $(document).ready(function() {
+      
+      loadContainer("tweetlist");
+
+      // calling nested function from outside the function 
+      // hmmmmmmmmmmmmmmmmloadContainer.fetchTweetsAnchor();
+  });
+
+  ///////////// END /////////////////////////////////////////////
+
+</script>
 
 {% endblock script %}
 

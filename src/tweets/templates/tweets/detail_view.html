@@ -2,6 +2,30 @@
 
 {% block title %} {{ block.super }} | Detail {% endblock title %}
 
+
+{% block script %}
+{% load static %}
+
+<script>
+
+  ///////////////  Document Body Part //////////////////////////
+  $(document).ready(function() {
+      
+
+    //console.log("OKY JUST DID THIS!!");
+    loadContainer("tweetlist", {{ object.id }});
+
+    //   // calling nested function from outside the function 
+    //   yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyloadContainer.fetchSingleTweetAnchor(object.id);
+  });
+
+  ///////////// END /////////////////////////////////////////////
+
+</script>
+
+{% endblock script %}
+
+
 {% block body %}
 
 <div class="row">
@@ -10,9 +34,7 @@
     </div>
 
     <div class="col-sm-9 col-xs-12">
-        Is Retweet: {{ is_retweet }} <br/>
-        {{ object.content }} <br/>
-        Via {{ object.user }} | {{ object.timestamp|timesince }}
+        <div id="tweetlist"></div>
     </div>
 
 </div>

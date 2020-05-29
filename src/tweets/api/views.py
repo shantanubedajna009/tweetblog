@@ -83,9 +83,63 @@ class TweetCreateAPIView(CreateAPIView):
 
         return context
 
+
+    # eta karon user ta by default aashe naa 
+    # jokhon $(this).serialize() use korchi jquery te 
+    # form er data take nie json banie
+    # tarpor , serializer er through pathacche
+    # tai manually request.user ta attach korte hocce
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     
+
+
+class TweetDetailAPIView(ListAPIView):
+    serializer_class = TweetModelSerializer
+    pagination_class = StandardResultsPagination
+    permission_classes = [permissions.AllowAny]
+
+
+    # standard for this too as the Listview itself
+    # cause to get liked by us or not to change the verb we need to
+    # add requested_user for the get_liked_by_user method in the serializer
+    # just modifying the context view of a APIView
+    def get_serializer_context(self, *args, **kwargs):
+        context = super(TweetDetailAPIView, self).get_serializer_context(*args, **kwargs)
+        context['requested_user'] = self.request
+
+        return context
+
+
+    def get_queryset(self, *args, **kwargs):
+        
+        requested_user = self.kwargs.get("username") 
+
+        pk_of = self.kwargs.get("pk")
+
+        qs = Tweet.objects.filter(pk=pk_of)
+
+        if qs.exists() and qs.count() == 1:
+            twt = qs.first()
+
+            twt_chil = Tweet.objects.get_reply_children(twt)
+
+            if twt_chil.exists():
+                qs = (qs | twt_chil).distinct()
+                qs = qs.order_by("-timestamp")
+    
+        
+        # pretty self explanatory
+        # just checking if q is present
+        
+        q = self.request.GET.get("q", None)
+        
+        if q:
+            qs = qs.filter(
+                Q(content__icontains=q) |
+                Q(user__username__icontains=q)
+            )
+        return qs
 
 
 

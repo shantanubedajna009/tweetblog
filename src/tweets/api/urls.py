@@ -7,7 +7,8 @@ from django.views.generic.base import RedirectView
 from tweets.api.views import (TweetListAPIView, 
                               TweetCreateAPIView, 
                               RetweetAPIView,
-                              TweetLikeAPIView)
+                              TweetLikeAPIView,
+                              TweetDetailAPIView)
 
 
 app_name = "tweet-api"
@@ -18,5 +19,6 @@ urlpatterns = [
      url(r'^create/$', TweetCreateAPIView.as_view(), name="create"),
      url(r'^(?P<pk>\d+)/retweet/$', RetweetAPIView.as_view(), name="retweet"),
      url(r'^(?P<pk>\d+)/like/$', TweetLikeAPIView.as_view(), name="like"),
+     url(r'^(?P<pk>\d+)/$', TweetDetailAPIView.as_view(), name="detail"),
 
 ]

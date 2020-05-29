@@ -71,6 +71,9 @@ class TweetModelManager(models.Manager):
         
         return is_liked, tweet.liked_users.all().count()
     
+    def get_reply_children(self, tweet):
+        qs = Tweet.objects.filter(parent=tweet).filter(isReply=True)
+        return qs
 
 
 class Tweet(models.Model):

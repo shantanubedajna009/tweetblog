@@ -5,7 +5,11 @@
 
 {% block script %}
 
-    <script src="{% static 'tweets/js/tweets_list.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            loadContainer("tweetlist");
+        });
+    </script>
 
 {% endblock script %}
 

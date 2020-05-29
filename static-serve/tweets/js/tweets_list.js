@@ -1,5 +1,8 @@
 
-function loadContainer(tweetContainerID) {
+function loadContainer(tweetContainerID, fetchOneId) {
+
+
+    //console.log("FETCHONEID IS: " + fetchOneId);
 
     ///////////////////// variable declarartion part //////////////////////////////
     var charStart = 140;
@@ -7,8 +10,11 @@ function loadContainer(tweetContainerID) {
     var nextPage = null;
     var tweetContainer; // initially this is undefined
     var initialUrl; // initially this is undefined also
-    loadContainer.fetchTweetsAnchor = fetchTweets; // making the fetchtweets equal so we can call it from outside eq: document.ready()
-    
+    //loadContainer.fetchTweetsAnchor = fetchTweets; // making the fetchtweets equal so we can call it from outside eq: document.ready()
+    //loadContainer.fetchSingleTweetAnchor = fetchSingleTweet;
+    var isSingleTweetDetailPage = false;
+    var justASingleReply = false;
+
     if (tweetContainerID){
         tweetContainer = $("#" + tweetContainerID);
     }else{
@@ -203,15 +209,18 @@ function loadContainer(tweetContainerID) {
         event.preventDefault();
         data_id = $(this).attr("data-id");
         data_user = $(this).attr("data-user");
+        data_content = $(this).parent().find("span.content").text();
 
         $("#replyModal").modal({
             
         });
 
-        $("#replyModal textarea").after("<input type='hidden' value='" + data_id + "' name='parent' />");
+        $("#replyModal textarea").after("<input type='hidden' value='" + data_id + "' name='parent_id' />");
         $("#replyModal textarea").after("<input type='hidden' value=" + true + " name='isReply' />");
 
         $("#replyModal textarea").val("@" + data_user + " ");
+
+        $("#replyModal #replyModalLabel").text("Reply to : " + data_content);
 
         $("#replyModal").on("shown.bs.modal", function () {
             $("#tweetReplyArea").focus();
@@ -280,12 +289,24 @@ function loadContainer(tweetContainerID) {
 
         if (tweetlist == 0){
             tweetContainer.text("No Tweets Found");
+        }
+        else if(tweetlist == 1){
+            justASingleReply = true;
         }else{
 
             $.each(tweetlist, function (index, object) {
-                attachTweets(object, false);
+                if (!object.isReply && isSingleTweetDetailPage){
+                    //console.log("OLAAAAAAAAAAAAAAAAAA");
+                    attachTweets(object, true);
+
+                }else{
+                    attachTweets(object, false);
+                }
+            
             });
         }
+
+        justASingleReply = false;
         
     }
 
@@ -296,7 +317,16 @@ function loadContainer(tweetContainerID) {
         let container;
         let isReply;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        console.log("isSingleTweetDetailPage: " + isSingleTweetDetailPage);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
         isReply = value.isReply;
+
+        let replyId = value.id 
 
         //console.log(isReply);
 
@@ -313,7 +343,9 @@ function loadContainer(tweetContainerID) {
             preContent = 
                 "<span class='grey-class'>"+
             
-                    "Retweet via " + "@" +value.parent.user.username + " on " + value.date_display  +
+                    "Retweet via " + "@" +value.parent.user.username + " on " + value.date_display  + 
+                    "<br><br>" +
+                    value.parent.content +
         
                 "</span>" + "<br/><br/>"
                 
@@ -322,17 +354,22 @@ function loadContainer(tweetContainerID) {
             
         } else if (value.parent && isReply){
 
+            replyId = value.parent.id 
+
             preContent = 
             "<span class='grey-class'>"+
         
-                "Reply to " + "@" + value.parent.user.username   +
+                "Reply to " + "@" + value.parent.user.username   + 
+                "<br><br>" +
+                value.parent.content +
     
             "</span>" + "<br/><br/>" 
         }
 
         let tweetContent =  
-        
-            value.content + "<br/>"+
+            "<span class='content'>"+
+                value.content +
+            "</span>" + "<br/>"+
                             
             "via " + "<a href='"+value.user.url+"'>"+ value.user.username +"</a>" +
                 
@@ -348,7 +385,7 @@ function loadContainer(tweetContainerID) {
     
                 " | " +
                 
-                "<a data-id='"+ value.id +"' data-user='"+ value.user.username +"' class='tweetReply' href='#'>Reply</a>"
+                "<a data-id='"+ replyId +"' data-user='"+ value.user.username +"' class='tweetReply' href='#'>Reply</a>"
 
 
         
@@ -365,6 +402,22 @@ function loadContainer(tweetContainerID) {
                     "</div>"+
                 "</div>" +
                 "<hr>"
+
+            if (isReply && isSingleTweetDetailPage && !justASingleReply){
+
+                container = 
+
+                "<div class=\"media\" style='margin-left: 100px;'>"+
+                    "<div class=\"media-body\">"+
+
+                        preContent +
+
+                        tweetContent +
+
+                    "</div>"+
+                "</div>" +
+                "<hr>"
+            }
         
         } else{
             container = 
@@ -444,7 +497,7 @@ function loadContainer(tweetContainerID) {
 
     ////////////////////////// Character limit part ////////////////////////////////////////////
 
-    $(".tweet-form").append("<span class='tweetCharsleft'>"+ charStart +"</span>");
+    $(".tweet-form").append("<span class='tweetCharsleft' style='margin-left: 20px;'>"+ charStart +"</span>");
 
     $(".tweet-form textarea").keyup(function (event) {
         //console.log(event.key, event.keyCode, event.timeStamp);
@@ -487,15 +540,70 @@ function loadContainer(tweetContainerID) {
     ///////////////////////////// END /////////////////////////////////////////////
 
 
+    /////////////////////////// FETCH SINGLE TWEET////////////////////////////////
+
+
+
+    function fetchSingleTweet(fetchOneId) {
+
+        var fetchUrl = "/api/tweet/" + fetchOneId + "/";
+
+        isSingleTweetDetailPage = true;
+
+        console.log(fetchOneId);
+
+        //var requestUrl;
+
+        // if (!url){
+        //     requestUrl = initialUrl;
+        // }else{
+        //     requestUrl = url;
+        // }
+
+        query = getParameterByName("q");
+        console.log(query);
+
+        $.ajax({
+            url: fetchUrl,
+             data: {
+                 "q": query
+             },
+
+            method: "GET",
+
+            success: function(data) {
+                nextPage = data.next;
+
+                if (nextPage == null){
+                    $(".load-more").css("display", "none");
+                 }
+                 parseTweets(data.results)
+                 updateHashLinks();
+                 updateATTLinks();
+
+                 isSingleTweetDetailPage = false;
+            },
+
+            error: function (data) {
+                console.log("ERROR");
+                console.log(data);
+
+                isSingleTweetDetailPage = false;
+            }
+        });
+
+    }
+
+
+    /////////////////////////// END //////////////////////////////////////////////
+    //console.log("Reached the end");
+    if(fetchOneId){
+
+        //console.log("IN SINGLE TWEET");
+        fetchSingleTweet(fetchOneId);
+    }else{
+        fetchTweets();
+    }
+
 }
 
-///////////////  Document Body Part //////////////////////////
-$(document).ready(function() {
-    
-    loadContainer();
-
-    // calling nested function from outside the function 
-    loadContainer.fetchTweetsAnchor();
-});
-
-///////////// END /////////////////////////////////////////////
