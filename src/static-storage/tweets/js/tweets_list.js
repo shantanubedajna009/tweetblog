@@ -72,7 +72,7 @@ function loadContainer(tweetContainerID, fetchOneId) {
         }
 
 
-        var innerdiv = $(data).find(".nanikore");
+        var innerdiv = $(data).find(".content");
 
         //console.log("innserdiv is: " + innerdiv.html())
             
@@ -121,7 +121,7 @@ function loadContainer(tweetContainerID, fetchOneId) {
         }
 
 
-        var innerdiv = $(data).find(".nanikore");
+        var innerdiv = $(data).find(".content");
 
         //console.log("innserdiv is: " + innerdiv.html())
             
@@ -338,8 +338,8 @@ function loadContainer(tweetContainerID, fetchOneId) {
                 "<span class='grey-class'>"+
             
                     "Retweet via " + "@" +value.parent.user.username + " on " + value.date_display  + 
-                    "<br><br>" +
-                    value.parent.content +
+                    // "<br><br>" +
+                    // value.parent.content +
         
                 "</span>" + "<br/><br/>"
                 
@@ -371,7 +371,7 @@ function loadContainer(tweetContainerID, fetchOneId) {
                 
                 "<a href='"+ value.tweet_url +"'>View</a>"+
                 
-                ( initialUrl === "/api/tweet/" ? " | " + "<a class='retweetbtn' href='"+ value.retweet_url +"'>Retweet</a>" : "" ) +
+                ( initialUrl === "/api/tweet/" && !isReply ? " | " + "<a class='retweetbtn' href='"+ value.retweet_url +"'>Retweet</a>" : "" ) +
 
                 " | " +
                 

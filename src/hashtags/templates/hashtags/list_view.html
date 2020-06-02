@@ -1,22 +1,46 @@
+
 {% extends "base.html" %}
 
 {% block title %} {{ block.super }} | Tag List {% endblock title %}
 
+{% block script %}
+{% load static %}
+
+<script>
+
+  ///////////////  Document Body Part //////////////////////////
+  $(document).ready(function() {
+      
+      loadContainer("tweetlist");
+
+      // calling nested function from outside the function 
+      // hmmmmmmmmmmmmmmmmloadContainer.fetchTweetsAnchor();
+  });
+
+  ///////////// END /////////////////////////////////////////////
+
+</script>
+
+{% endblock script %}
 
 {% block body %}
     
     <div class="row">
 
         <div class="col-sm-3 col-xs-12" style="background-color: bisque;">
-            <h1><p>{{ obj.tag }}</p></h1>
+            
+            <p class="grey-class">Results for tag</p>
+            
+            <h1><p>#{{ obj.tag }}</p></h1>
         </div>
 
         <div class="col-sm-9 col-xs-12">
-            {% for tweet in obj.tag_tweets %}
-                {{ tweet.content }} <br><hr>
-            {% endfor %}
 
+            <div id="tweetlist" data-url="/api/tag/{{ obj.tag }}"></div>
+
+            <a class="btn btn-success load-more" href="#">Load More Tweets</a>
         </div>
     </div>
 
 {% endblock body %}
+

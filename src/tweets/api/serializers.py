@@ -6,6 +6,10 @@ from django.urls import reverse, reverse_lazy
 
 class ParentTweetModelSerializer(serializers.ModelSerializer):
 
+
+    # parent_id already exists in model just overring it/mofifying it to be write only (not visible in display api)
+    # and required false, so it is not requireed to save in createAPI/UpdateAPIviews 
+    
     parent_id = serializers.CharField(write_only=True, required=False)
 
     user = UserDisplaySerializer(read_only=True)
@@ -49,6 +53,7 @@ class ParentTweetModelSerializer(serializers.ModelSerializer):
             # in serializers, we need to pass it as context to be able
             # access in serializers, cause By default serializers only create 
             # contexts based on the model fields
+
             request = self.context.get('requested_user')
             user = request.user
 
@@ -83,7 +88,28 @@ class ParentTweetModelSerializer(serializers.ModelSerializer):
 
 class TweetModelSerializer(serializers.ModelSerializer):
 
+
+    # parent_id already exists in model just overring it/mofifying it to be write only (not visible in display api)
+    # and required false, so it is not requireed to save in createAPI/UpdateAPIviews 
     parent_id = serializers.CharField(write_only=True, required=False)
+
+    
+    
+    # just doing doom photash with the user model
+    # by default it only displays the user not its properties
+    # to see those properties we are just for displaying purpose adding the 
+    # user model as it's own serializer to see that user's other fields
+    # but when in createAPIview or whereever the API receives the data
+    # it takes only the fields that are present in the model means uer_id
+    # not this UserDisplaySerializer bullshit
+    # this other linking serializers + all the extra fields only comes
+    #  into effect when the listview or detailview throws the data
+    # the the serializer translates the data , for example makes the User as
+    # UserDisplaySerializer translating it from mere user_id automatically
+    # just like the ParentTweetModelSerializer get's translated from parent_id
+    # amazing !!!!
+
+
 
     user = UserDisplaySerializer(read_only=True)
     # this is same as the ParentTweetSerializer
@@ -102,9 +128,12 @@ class TweetModelSerializer(serializers.ModelSerializer):
     # make other serializers read_only if you dont want to populate (ovverride) the referencce 
     # with foreign key from this model, like here we dont want to override the parent instance
     # cause we want to see the parent attached to it
-    # if that is the case make read_only=True which makes same crud operation possible from the 
+    # if that is the case make read_only=True which makes same crud operation impossible from the 
     # rest api view and read the referenced parent/user data  
+    # cause ParentModelSerializer gets translated to parent_id anyways
+
     parent = ParentTweetModelSerializer(read_only=True)  # this will be equal to the model
+
     # since the model has the parent self as foreign key because of that
     # if we reference it here it will reference the parent auto if present
     # otherwise null, adding fields which are as foreign key in serializers

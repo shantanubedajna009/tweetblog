@@ -17,7 +17,9 @@ from django.http import HttpResponseRedirect
 
 
 
-class RetweetView(View):
+class RetweetView(LoginRequiredMixin, View):
+
+    login_url = '/login/'
 
     def get(self, request, pk, *args, **kwargs):
         parent_tweet = get_object_or_404(Tweet, pk=pk)
@@ -40,6 +42,7 @@ class RetweetView(View):
 
 
 class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
+    login_url = '/login/'
     #queryset = Tweet.objects.all()
     form_class = TweetModelForm
     #fields = [
@@ -52,6 +55,8 @@ class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
     login_url = reverse_lazy("home")
 
 class TweetUpdateView(LoginRequiredMixin, OwnerNotSameMixin, UpdateView):
+    login_url = '/login/'
+    
     queryset = Tweet.objects.all()
     form_class = TweetModelForm
     template_name = 'tweets/update_view.html'
@@ -60,6 +65,8 @@ class TweetUpdateView(LoginRequiredMixin, OwnerNotSameMixin, UpdateView):
 
 
 class TweetDetailView(LoginRequiredMixin, OwnerNotSameMixin, DetailView):
+    login_url = '/login/'
+    
     queryset = Tweet.objects.all()
     template_name = "tweets/detail_view.html"
 
@@ -83,7 +90,9 @@ class TweetDetailView(LoginRequiredMixin, OwnerNotSameMixin, DetailView):
 
 
 
-class TweetListView(ListView):
+class TweetListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    
     queryset = Tweet.objects.all()
     template_name = "tweets/list_view.html"
 
@@ -113,6 +122,8 @@ class TweetListView(ListView):
 
 
 class TweetDeleteView(LoginRequiredMixin, OwnerNotSameMixin, DeleteView):
+    login_url = '/login/'
+    
     model = Tweet
     success_url = reverse_lazy("home")
     template_name = "tweets/delete_confirm.html"

@@ -7,6 +7,8 @@ from tweets.api.pagination import StandardResultsPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 
 
@@ -147,6 +149,7 @@ class TweetListAPIView(ListAPIView):
     
     serializer_class = TweetModelSerializer
     pagination_class = StandardResultsPagination
+    permission_classes = [permissions.AllowAny]
 
     
     # just modifying the context view of a APIView
@@ -166,7 +169,7 @@ class TweetListAPIView(ListAPIView):
         # get() method in a class based view
 
         if requested_user:                                           # same as parent=None just more Django way
-            qs = Tweet.objects.filter(user__username=requested_user).filter(parent__isnull=True) #second filter cause we dont want to show retweets in the User's Detail View
+            qs = Tweet.objects.filter(user__username=requested_user)#.filter(parent__isnull=True) #second filter cause we dont want to show retweets in the User's Detail View
 
         else:
 

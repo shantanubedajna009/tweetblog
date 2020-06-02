@@ -48,7 +48,16 @@
     <script src="{% static 'tweets/js/tweets_list.js' %}"></script>
 
     <script>
+        
+        // Array Remove - By John Resig (MIT Licensed)
+        Array.prototype.remove = function(from, to) {
+          var rest = this.slice((to || from) + 1 || this.length);
+          this.length = from < 0 ? this.length + from : from;
+          return this.push.apply(this, rest);
+        };
 
+        
+        
         function autoTypeSearch () {
             var typingTimer;
             var doneInterval = 800;
@@ -74,8 +83,21 @@
             // change this to fit the user own tweet filter search
             function doneSearchString() {
               if (searchQuery){
-                url = "/tweet/search/?q="+searchQuery;
-                document.location.href = url;
+                //url = "/tweet/search/?q="+searchQuery;
+                let nanikore = document.location.href;
+                nanikore = nanikore.split("?")[0];
+                nanikore = nanikore.split("/");
+                nanikore.remove(0, 2);
+                if (nanikore[nanikore.length - 1] === ""){
+                  nanikore.remove(-1);
+                  
+                }
+
+                nanikore = "/" + nanikore.join("/")  + "/";
+                nanikore = nanikore + "?q="+searchQuery;
+                
+                console.log(nanikore);
+                document.location.href = nanikore;
               }
             }
         }

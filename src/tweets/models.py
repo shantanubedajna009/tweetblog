@@ -16,13 +16,13 @@ class TweetModelManager(models.Manager):
         if parent_obj.parent: # if parent exists for the parent
             
             og_parent = parent_obj.parent # always referenncing the root parent
-            
             # so that someone just can't retweet and call the They Made The Tweet
+            
         else: # no parent exist for the source tweet, means IT is itself the og
             og_parent = parent_obj
 
         # dont retweet if the user already retweeted the tweet
-        qs = self.get_queryset().filter(user=user, parent=og_parent)
+        qs = self.get_queryset().filter(user=user, parent=og_parent, isReply=False)
 
         # if you want to make user retweet a retweet tomorrow, just not today
         # qs = qs.filter(
@@ -75,6 +75,8 @@ class TweetModelManager(models.Manager):
         qs = Tweet.objects.filter(parent=tweet).filter(isReply=True)
         return qs
 
+########################### Tweeet Model ##########################################################################
+
 
 class Tweet(models.Model):
 
@@ -105,8 +107,7 @@ class Tweet(models.Model):
             raise ValidationError('Nigga can\'t be abc')
         return super(Tweet, self).clean(*args, **kwargs) """
 
-
-
+######################### Tweet Model Ends HERE ###################################################################
 
 
 def tweet_save_listener(sender, instance, *args, **kwargs):

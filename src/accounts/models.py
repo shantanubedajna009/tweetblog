@@ -44,6 +44,39 @@ class UserProfilemanager(models.Manager):
         
         return False
 
+
+    def recommended(self, user, limit_to=10):
+        user_profile = user.profile
+        im_following = user_profile.get_following()
+
+                                
+                                # if it was a UserProfile object then to access user would be 
+                                # then to access User object would be UserProfileObject.user.username for username
+                                # UserProfileObject.user.id to get the OneToOne User corresponding id
+                                # likewise since we are accessing the queryset inside the UserProfileObecjt itself
+                                # then exclude(user__in)  means user object
+                                # and the im_following is a list of User objects (cause remember accesing the following.all()
+                                # from front so we get user_id from the following table)
+        qs = self.get_queryset().exclude(user__in=im_following).exclude(id=user_profile.id).order_by("?")[:limit_to]
+        
+        #print('\n\n\n', qs.query, '\n\n\n')
+
+        return qs
+
+
+
+        #SELECT "accounts_userprofile"."id", "accounts_userprofile"."user_id" 
+        # FROM "accounts_userprofile" 
+        # WHERE (NOT
+        #  ("accounts_userprofile"."user_id" IN
+        #  (SELECT U0."id" FROM "auth_user" U0
+        #  INNER JOIN "accounts_userprofile_following" U1
+        #  ON (U0."id" = U1."user_id") WHERE
+        #  (U1."userprofile_id" = 1 AND NOT
+        #  (U0."username" = Hopsin01))))
+        #  AND NOT ("accounts_userprofile"."id" = 1))
+        #  ORDER BY RANDOM() ASC  LIMIT 10
+
         
 
 

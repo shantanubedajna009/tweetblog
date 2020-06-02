@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.views import View
 from hashtags.models import HashTag
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class HashtagView(View):
+class HashtagView(LoginRequiredMixin, View):
+    login_url = '/login/'
 
     # for when we use a View in get method the url parameter get's passed like this
     # in the next argument to request itself

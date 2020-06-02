@@ -6,7 +6,7 @@ class FormUserNeededMixin(object):
         if self.request.user.is_authenticated:
 
             
-            # this prt happens auto if we dont define a mixin
+            # this part happens auto if we dont define a mixin
             # this is used here cause we need to check if the user is authenticated
             form.instance.user = self.request.user
 

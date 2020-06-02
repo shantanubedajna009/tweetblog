@@ -13,7 +13,6 @@ function loadContainer(tweetContainerID, fetchOneId) {
     //loadContainer.fetchTweetsAnchor = fetchTweets; // making the fetchtweets equal so we can call it from outside eq: document.ready()
     //loadContainer.fetchSingleTweetAnchor = fetchSingleTweet;
     var isSingleTweetDetailPage = false;
-    var justASingleReply = false;
 
     if (tweetContainerID){
         tweetContainer = $("#" + tweetContainerID);
@@ -73,7 +72,7 @@ function loadContainer(tweetContainerID, fetchOneId) {
         }
 
 
-        var innerdiv = $(data).find(".nanikore");
+        var innerdiv = $(data).find(".content");
 
         //console.log("innserdiv is: " + innerdiv.html())
             
@@ -122,7 +121,7 @@ function loadContainer(tweetContainerID, fetchOneId) {
         }
 
 
-        var innerdiv = $(data).find(".nanikore");
+        var innerdiv = $(data).find(".content");
 
         //console.log("innserdiv is: " + innerdiv.html())
             
@@ -289,9 +288,6 @@ function loadContainer(tweetContainerID, fetchOneId) {
 
         if (tweetlist == 0){
             tweetContainer.text("No Tweets Found");
-        }
-        else if(tweetlist == 1){
-            justASingleReply = true;
         }else{
 
             $.each(tweetlist, function (index, object) {
@@ -305,8 +301,6 @@ function loadContainer(tweetContainerID, fetchOneId) {
             
             });
         }
-
-        justASingleReply = false;
         
     }
 
@@ -344,8 +338,8 @@ function loadContainer(tweetContainerID, fetchOneId) {
                 "<span class='grey-class'>"+
             
                     "Retweet via " + "@" +value.parent.user.username + " on " + value.date_display  + 
-                    "<br><br>" +
-                    value.parent.content +
+                    // "<br><br>" +
+                    // value.parent.content +
         
                 "</span>" + "<br/><br/>"
                 
@@ -377,7 +371,7 @@ function loadContainer(tweetContainerID, fetchOneId) {
                 
                 "<a href='"+ value.tweet_url +"'>View</a>"+
                 
-                ( initialUrl === "/api/tweet/" ? " | " + "<a class='retweetbtn' href='"+ value.retweet_url +"'>Retweet</a>" : "" ) +
+                ( initialUrl === "/api/tweet/" && !isReply ? " | " + "<a class='retweetbtn' href='"+ value.retweet_url +"'>Retweet</a>" : "" ) +
 
                 " | " +
                 
@@ -403,11 +397,11 @@ function loadContainer(tweetContainerID, fetchOneId) {
                 "</div>" +
                 "<hr>"
 
-            if (isReply && isSingleTweetDetailPage && !justASingleReply){
+            if (isReply && isSingleTweetDetailPage){
 
                 container = 
 
-                "<div class=\"media\" style='margin-left: 100px;'>"+
+                "<div class=\"media\" style='margin-left: 50px;'>"+
                     "<div class=\"media-body\">"+
 
                         preContent +
@@ -582,6 +576,10 @@ function loadContainer(tweetContainerID, fetchOneId) {
                  updateATTLinks();
 
                  isSingleTweetDetailPage = false;
+
+                if ($(".media").length == 1){
+                    $(".media").css("margin-left", "0px");
+                }
             },
 
             error: function (data) {
@@ -601,6 +599,7 @@ function loadContainer(tweetContainerID, fetchOneId) {
 
         //console.log("IN SINGLE TWEET");
         fetchSingleTweet(fetchOneId);
+
     }else{
         fetchTweets();
     }
